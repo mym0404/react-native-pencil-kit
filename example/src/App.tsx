@@ -1,11 +1,10 @@
-import * as React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { PencilKitView } from 'react-native-pencil-kit';
+import PencilKitView from 'react-native-pencil-kit';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <PencilKitView color={'#32a852'} style={styles.box} />
+      <PencilKitView style={styles.box} />
     </View>
   );
 }

@@ -27,6 +27,8 @@
   ],
   "scripts": {
     "example": "yarn workspace react-native-pencil-kit-example",
+    "dev": "yarn example start",
+    "ios": "yarn example ios",
     "typecheck": "tsc --noEmit",
     "lint": "./script/lint.sh",
     "t": "./script/lint.sh",
@@ -37,8 +39,9 @@
     "prepare": "husky",
     "release": "release-it",
     "release:pre": "release-it pre",
-    "xcode": "open $(pwd)/example/ios/NaverMapExample.xcworkspace",
-    "pod": "cd example/ios && bundle install && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install"
+    "xcode": "open $(pwd)/example/ios/PencilKitExample.xcworkspace",
+    "pod": "cd example/ios && bundle install && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install",
+    "codegen": "yarn react-native codegen --path example/ --outputPath example/ios"
   },
   "keywords": [
     "react-native",
