@@ -33,9 +33,12 @@
     "format": "./script/clang-format.sh",
     "lint:js": "eslint \"**/*.{js,ts,tsx}\"",
     "lint:ios": "./script/clang-lint.sh",
-    "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
+    "clean": "del-cli example/ios/build lib",
     "prepare": "husky",
-    "release": "release-it"
+    "release": "release-it",
+    "release:pre": "release-it pre",
+    "xcode": "open $(pwd)/example/ios/NaverMapExample.xcworkspace",
+    "pod": "cd example/ios && bundle install && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install"
   },
   "keywords": [
     "react-native",
