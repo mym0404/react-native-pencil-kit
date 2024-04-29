@@ -43,7 +43,18 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "pencilkit",
+    "ios-pencil-kit",
+    "react",
+    "typescript",
+    "javascript",
+    "react-native-pencil-kit",
+    "RNPencilKit",
+    "Drawing",
+    "Color",
+    "Pallete",
+    "Base64"
   ],
   "repository": {
     "type": "git",
