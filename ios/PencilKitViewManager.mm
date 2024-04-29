@@ -1,6 +1,6 @@
-#import <React/RCTViewManager.h>
-#import <React/RCTUIManager.h>
 #import "RCTBridge.h"
+#import <React/RCTUIManager.h>
+#import <React/RCTViewManager.h>
 
 @interface PencilKitViewManager : RCTViewManager
 @end
@@ -9,8 +9,7 @@
 
 RCT_EXPORT_MODULE(PencilKitView)
 
-- (UIView *)view
-{
+- (UIView*)view {
   return [[UIView alloc] init];
 }
 
