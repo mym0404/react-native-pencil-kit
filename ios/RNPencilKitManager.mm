@@ -6,9 +6,6 @@
 @end
 
 @implementation RNPencilKitManager
-
-RCT_EXPORT_MODULE(RNPencilKit)
-
-// RCT_EXPORT_VIEW_PROPERTY(color, NSString)
+RCT_EXPORT_MODULE()
 
 @end
