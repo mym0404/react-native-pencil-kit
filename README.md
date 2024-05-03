@@ -26,7 +26,7 @@ Link `PencilKit.framework`
 ![xcode](https://raw.githubusercontent.com/mym0404/image-archive/master/202405040319998.webp)
 
 > With Fabric, we should access c++ functions and we should use objective-c++.
-> This prevents us from Apple SDK framework module import and shouldn't link PencilKit automatically at now.
+> This prevents us from Apple SDK framework module importing and we cannot link PencilKit automatically at now.
 
 ## Usage
 
