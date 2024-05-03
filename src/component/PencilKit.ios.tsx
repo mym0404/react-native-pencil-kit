@@ -3,6 +3,7 @@ import { processColor, Text } from 'react-native';
 import { type PencilKitProps, type PencilKitRef, PencilKitUtil } from 'react-native-pencil-kit';
 
 import NativePencilKitView, { Commands } from '../spec/RNPencilKitNativeComponent';
+import { useLazyPromise } from '../util/useLazyPromise';
 
 function PencilKitComponent(
   {
@@ -25,6 +26,18 @@ function PencilKitComponent(
   ref: ForwardedRef<PencilKitRef>,
 ) {
   const nativeRef = useRef(null);
+  const {
+    resolve: resolveGetBase64Data,
+    reject: rejectGetBase64Data,
+    resetPromise: resetGetBase64DataPromise,
+  } = useLazyPromise<string>();
+
+  const {
+    resolve: resolveSaveDrawing,
+    reject: rejectSaveDrawing,
+    resetPromise: resetSaveDrawingPromise,
+  } = useLazyPromise<string>();
+
   useImperativeHandle(
     ref,
     () => ({
@@ -33,9 +46,19 @@ function PencilKitComponent(
       hideToolPicker: () => Commands.hideToolPicker(nativeRef.current!),
       redo: () => Commands.redo(nativeRef.current!),
       undo: () => Commands.undo(nativeRef.current!),
-      saveDrawing: (path) => Commands.saveDrawing(nativeRef.current!, path),
+      saveDrawing: (path) => {
+        const promise = resetSaveDrawingPromise();
+        Commands.saveDrawing(nativeRef.current!, path);
+
+        return promise;
+      },
       loadDrawing: (path) => Commands.loadDrawing(nativeRef.current!, path),
-      getBase64Data: () => Commands.getBase64Data(nativeRef.current!),
+      getBase64Data: () => {
+        const promise = resetGetBase64DataPromise();
+        Commands.getBase64Data(nativeRef.current!);
+
+        return promise;
+      },
       loadBase64Data: (base64) => Commands.loadBase64Data(nativeRef.current!, base64),
       setTool: ({ color, toolType, width }) =>
         Commands.setTool(
@@ -45,7 +68,7 @@ function PencilKitComponent(
           color ? (processColor(color) as number) : 0,
         ),
     }),
-    [],
+    [resetSaveDrawingPromise, resetGetBase64DataPromise],
   );
 
   if (!PencilKitUtil.isPencilKitAvailable()) {
@@ -72,6 +95,20 @@ function PencilKitComponent(
         onCanvasViewDidEndUsingTool,
         onCanvasViewDidFinishRendering,
         onCanvasViewDrawingDidChange,
+        onGetBase64Data: ({ nativeEvent: { success, base64 } }) => {
+          if (success) {
+            resolveGetBase64Data.current?.(base64 ?? '');
+          } else {
+            rejectGetBase64Data.current?.();
+          }
+        },
+        onSaveDrawing: ({ nativeEvent: { base64, success } }) => {
+          if (success) {
+            resolveSaveDrawing.current?.(base64 ?? '');
+          } else {
+            rejectSaveDrawing.current?.();
+          }
+        },
       }}
       {...rest}
     />

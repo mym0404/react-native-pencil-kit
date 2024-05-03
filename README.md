@@ -33,6 +33,106 @@ import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-nati
 <PencilKitView style={{ flex: 1 }} />
 ```
 
+> [!NOTE]
+> You can expand to show full example!
+<details>
+<summary>Full Example</summary>
+
+```tsx
+const allPens = [
+  'pen',
+  'pencil',
+  'marker',
+  'crayon',
+  'monoline',
+  'watercolor',
+  'fountainPen',
+] satisfies PencilKitTool[];
+
+const allErasers = [
+  'eraserBitmap',
+  'eraserVector',
+  'eraserFixedWidthBitmap',
+] satisfies PencilKitTool[];
+
+function getRandomColor() {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
+
+export default function App() {
+  const ref = useRef<PencilKitRef>(null);
+
+  const path = `${DocumentDirectoryPath}/drawing.dat`;
+
+  return (
+    <View style={{ width: '100%', height: '100%' }}>
+      <PencilKitView
+        ref={ref}
+        style={{ flex: 1 }}
+        alwaysBounceVertical={false}
+        alwaysBounceHorizontal={false}
+        drawingPolicy={'anyinput'}
+        backgroundColor={'#aaaaff22'}
+      />
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 4,
+          padding: 8,
+          paddingBottom: 120,
+        }}
+      >
+        <Btn onPress={() => ref.current?.showToolPicker()} text={'show'} />
+        <Btn onPress={() => ref.current?.hideToolPicker()} text={'hide'} />
+        <Btn onPress={() => ref.current?.clear()} text={'clear'} />
+        <Btn onPress={() => ref.current?.undo()} text={'undo'} />
+        <Btn onPress={() => ref.current?.redo()} text={'redo'} />
+        <Btn onPress={() => ref.current?.saveDrawing(path).then(console.log)} text={'save'} />
+        <Btn onPress={() => ref.current?.loadDrawing(path)} text={'load'} />
+        <Btn onPress={() => ref.current?.getBase64Data().then(console.log)} text={'get base64'} />
+        <Btn onPress={() => ref.current?.loadBase64Data('')} text={'load base64'} />
+        {allPens.map((p) => (
+          <Btn
+            key={p}
+            variant={1}
+            onPress={() =>
+              ref.current?.setTool({
+                toolType: p,
+                width: 3 + Math.random() * 5,
+                color: getRandomColor(),
+              })
+            }
+            text={p}
+          />
+        ))}
+        {allErasers.map((p) => (
+          <Btn
+            variant={2}
+            key={p}
+            onPress={() =>
+              ref.current?.setTool({
+                toolType: p,
+                width: 3 + Math.random() * 5,
+                color: getRandomColor(),
+              })
+            }
+            text={p}
+          />
+        ))}
+      </View>
+    </View>
+  );
+}
+```
+
+</details>
+
 ## Props
 
 | Props                             | Description                                                                                                                    | Default |
@@ -55,18 +155,18 @@ import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-nati
 ## Commands
 
 
-| Method                                                                                      | Description                                                                             |
-|---------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
-| clear()                                                                                     | Clear canvas                                                                            |
-| showToolPicker()                                                                            | Show Palette                                                                            |
-| hideToolPicker()                                                                            | Hide Palette                                                                            |
-| redo()                                                                                      | Redo last drawing action                                                                |
-| undo()                                                                                      | Undo last drawing action                                                                |
-| saveDrawing: (path: string) => void;                                                        | Save drawing data into file system, can return base 64 data if `withBase64Data` is true |
-| loadDrawing: (path: string) => void;                                                        | Load drawing data from file system, can return base 64 data if `withBase64Data` is true |
-| getBase64Data: () => void;                                                                  | Get current drawing data as base64 string form                                          |
-| loadBase64Data: (base64: string) => void;                                                   | Load base64 drawing data into canvas                                                    |
-| setTool: (params: { toolType: PencilKitTool; width?: number; color?: ColorValue }) => void; | Set `PencilKitTool` type with width and color                                           |
+| Method                                                                                      | Description                                            |
+|---------------------------------------------------------------------------------------------|--------------------------------------------------------|
+| clear()                                                                                     | Clear canvas                                           |
+| showToolPicker()                                                                            | Show Palette                                           |
+| hideToolPicker()                                                                            | Hide Palette                                           |
+| redo()                                                                                      | Redo last drawing action                               |
+| undo()                                                                                      | Undo last drawing action                               |
+| saveDrawing: (path: string) => Promise<string>;                                             | Save drawing data into file system, return base64 data |
+| loadDrawing: (path: string) => void;                                                        | Load drawing data from file system                     |
+| getBase64Data: () => Promise<string>;                                                       | Get current drawing data as base64 string form         |
+| loadBase64Data: (base64: string) => void;                                                   | Load base64 drawing data into canvas                   |
+| setTool: (params: { toolType: PencilKitTool; width?: number; color?: ColorValue }) => void; | Set `PencilKitTool` type with width and color          |
 
 ## Tools
 

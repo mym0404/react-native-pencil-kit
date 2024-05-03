@@ -57,9 +57,9 @@ export default function App() {
         <Btn onPress={() => ref.current?.clear()} text={'clear'} />
         <Btn onPress={() => ref.current?.undo()} text={'undo'} />
         <Btn onPress={() => ref.current?.redo()} text={'redo'} />
-        <Btn onPress={() => ref.current?.saveDrawing(path)} text={'save'} />
+        <Btn onPress={() => ref.current?.saveDrawing(path).then(console.log)} text={'save'} />
         <Btn onPress={() => ref.current?.loadDrawing(path)} text={'load'} />
-        <Btn onPress={() => ref.current?.getBase64Data()} text={'get base64'} />
+        <Btn onPress={() => ref.current?.getBase64Data().then(console.log)} text={'get base64'} />
         <Btn onPress={() => ref.current?.loadBase64Data('')} text={'load base64'} />
         {allPens.map((p) => (
           <Btn

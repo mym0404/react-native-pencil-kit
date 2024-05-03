@@ -36,9 +36,9 @@ export type PencilKitRef = {
   hideToolPicker: () => void;
   redo: () => void;
   undo: () => void;
-  saveDrawing: (path: string) => void;
+  saveDrawing: (path: string) => Promise<string>;
   loadDrawing: (path: string) => void;
-  getBase64Data: () => void;
+  getBase64Data: () => Promise<string>;
   loadBase64Data: (base64: string) => void;
   setTool: (params: { toolType: PencilKitTool; width?: number; color?: ColorValue }) => void;
 };
