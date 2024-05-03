@@ -21,9 +21,12 @@
 yarn add react-native-pencil-kit
 ```
 
-Add `PencilKit.framework` if you meet OBJC Linking Error
+Link `PencilKit.framework`
 
 ![xcode](https://raw.githubusercontent.com/mym0404/image-archive/master/202405040319998.webp)
+
+> With Fabric, we should access c++ functions and we should use objective-c++.
+> This prevents us from Apple SDK framework module import and shouldn't link PencilKit automatically at now.
 
 ## Usage
 
