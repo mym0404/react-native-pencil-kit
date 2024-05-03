@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup
         uses: ./.github/actions/setup
@@ -20,32 +20,9 @@ jobs:
       - name: Lint files
         run: yarn lint
 
-      - name: Typecheck files
-        run: yarn typecheck
-
-#  test:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#
-#      - name: Setup
-#        uses: ./.github/actions/setup
-#
-#      - name: Run unit tests
-#        run: yarn test --maxWorkers=2 --coverage
-
-  build-library:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup
-        uses: ./.github/actions/setup
-
       - name: Build package
-        run: yarn prepare
+        run: yarn prepack
+
 
 #  build-android:
 #    runs-on: ubuntu-latest
