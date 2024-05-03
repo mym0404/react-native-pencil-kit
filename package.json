@@ -41,7 +41,8 @@
     "release:pre": "release-it pre",
     "xcode": "open $(pwd)/example/ios/PencilKitExample.xcworkspace",
     "pod": "cd example/ios && bundle install && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install",
-    "codegen": "yarn react-native codegen --path example/ --outputPath example/ios"
+    "codegen": "yarn react-native codegen --path example/ --outputPath example/ios",
+    "prepack": "bob build"
   },
   "keywords": [
     "react-native",
