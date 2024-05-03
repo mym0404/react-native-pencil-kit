@@ -64,6 +64,7 @@ export default function App() {
         {allPens.map((p) => (
           <Btn
             key={p}
+            variant={1}
             onPress={() =>
               ref.current?.setTool({
                 toolType: p,
@@ -76,6 +77,7 @@ export default function App() {
         ))}
         {allErasers.map((p) => (
           <Btn
+            variant={2}
             key={p}
             onPress={() =>
               ref.current?.setTool({
@@ -92,11 +94,23 @@ export default function App() {
   );
 }
 
-const Btn = ({ onPress, text }: { onPress: () => void; text: string }) => {
+const Btn = ({
+  onPress,
+  text,
+  variant = 0,
+}: {
+  onPress: () => void;
+  text: string;
+  variant?: number;
+}) => {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{ padding: 8, backgroundColor: 'black', borderRadius: 4 }}
+      style={{
+        padding: 8,
+        backgroundColor: variant === 0 ? 'black' : variant === 1 ? 'skyblue' : 'orange',
+        borderRadius: 4,
+      }}
     >
       <Text style={{ color: 'white', fontWeight: 'bold' }}>{text.toUpperCase()}</Text>
     </TouchableOpacity>
