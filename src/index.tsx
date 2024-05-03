@@ -77,15 +77,13 @@ function PencilKit(
       loadDrawing: (path) => Commands.loadDrawing(nativeRef.current!, path),
       getBase64Data: () => Commands.getBase64Data(nativeRef.current!),
       loadBase64Data: (base64) => Commands.loadBase64Data(nativeRef.current!, base64),
-      setTool: ({ color, toolType, width }) => {
-        console.log(color, processColor(color));
+      setTool: ({ color, toolType, width }) =>
         Commands.setTool(
           nativeRef.current!,
           toolType,
           width ?? 0,
           color ? (processColor(color) as number) : 0,
-        );
-      },
+        ),
     }),
     [],
   );

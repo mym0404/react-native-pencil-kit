@@ -1,7 +1,31 @@
 import { useRef } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
-import PencilKitView, { type PencilKitRef } from 'react-native-pencil-kit';
+import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-native-pencil-kit';
 import { DocumentDirectoryPath } from '@dr.pogodin/react-native-fs';
+
+const allPens = [
+  'pen',
+  'pencil',
+  'marker',
+  'crayon',
+  'monoline',
+  'watercolor',
+  'fountainPen',
+] satisfies PencilKitTool[];
+
+const allErasers = [
+  'eraserBitmap',
+  'eraserVector',
+  'eraserFixedWidthBitmap',
+] satisfies PencilKitTool[];
+
+function getRandomColor() {
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+
+  return 'rgb(' + r + ',' + g + ',' + b + ')';
+}
 
 export default function App() {
   const ref = useRef<PencilKitRef>(null);
@@ -16,16 +40,16 @@ export default function App() {
         alwaysBounceVertical={false}
         alwaysBounceHorizontal={false}
         drawingPolicy={'anyinput'}
-        backgroundColor={'blue'}
+        backgroundColor={'#aaaaff22'}
       />
       <View
         style={{
-          height: 300,
           flexDirection: 'row',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 4,
           padding: 8,
+          paddingBottom: 120,
         }}
       >
         <Btn onPress={() => ref.current?.showToolPicker()} text={'show'} />
@@ -37,16 +61,32 @@ export default function App() {
         <Btn onPress={() => ref.current?.loadDrawing(path)} text={'load'} />
         <Btn onPress={() => ref.current?.getBase64Data()} text={'get base64'} />
         <Btn onPress={() => ref.current?.loadBase64Data('')} text={'load base64'} />
-        <Btn
-          onPress={() =>
-            ref.current?.setTool({
-              toolType: 'pen',
-              width: 2,
-              color: 'red',
-            })
-          }
-          text={'pen'}
-        />
+        {allPens.map((p) => (
+          <Btn
+            key={p}
+            onPress={() =>
+              ref.current?.setTool({
+                toolType: p,
+                width: 3 + Math.random() * 5,
+                color: getRandomColor(),
+              })
+            }
+            text={p}
+          />
+        ))}
+        {allErasers.map((p) => (
+          <Btn
+            key={p}
+            onPress={() =>
+              ref.current?.setTool({
+                toolType: p,
+                width: 3 + Math.random() * 5,
+                color: getRandomColor(),
+              })
+            }
+            text={p}
+          />
+        ))}
       </View>
     </View>
   );

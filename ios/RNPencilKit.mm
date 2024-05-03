@@ -76,7 +76,6 @@ getEmitter(const SharedViewEventEmitter emitter) {
 }
 
 - (void)clear {
-  NSLog(@"clear");
   [_view setDrawing:[[PKDrawing alloc] init]];
 }
 
@@ -145,10 +144,33 @@ getEmitter(const SharedViewEventEmitter emitter) {
   if (error || !drawing) {
     return NO;
   } else {
-    [_view setDrawing:drawing];
+    PKCanvasView* newCanvas = [self copyCanvas:_view];
+    [_view removeFromSuperview];
+    _view = newCanvas;
+    self.contentView = newCanvas;
+
     [_view.undoManager removeAllActions];
+    [_view setDrawing:drawing];
     return YES;
   }
+}
+
+- (PKCanvasView*)copyCanvas:(PKCanvasView*)v {
+  PKCanvasView* newView = [[PKCanvasView alloc] initWithFrame:v.frame];
+  newView.alwaysBounceVertical = v.alwaysBounceVertical;
+  newView.alwaysBounceHorizontal = v.alwaysBounceHorizontal;
+  [newView setRulerActive:v.isRulerActive];
+  [newView setBackgroundColor:v.backgroundColor];
+  [newView setDrawingPolicy:v.drawingPolicy];
+  [newView setOpaque:v.isOpaque];
+  newView.delegate = self;
+  [_toolPicker removeObserver:v];
+  [_toolPicker addObserver:newView];
+  [_toolPicker setVisible:true forFirstResponder:newView];
+  if (_toolPicker.isVisible) {
+    [newView becomeFirstResponder];
+  }
+  return newView;
 }
 
 - (void)setTool:(NSString*)toolType width:(double)width color:(NSInteger)color {
