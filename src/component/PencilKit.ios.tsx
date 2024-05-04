@@ -38,32 +38,36 @@ function PencilKitComponent(
       saveDrawing: async (path) => {
         const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return await NativeRNPencilKitUtil.saveDrawing(handle, path);
+        return NativeRNPencilKitUtil.saveDrawing(handle, path);
       },
       loadDrawing: async (path) => {
         const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return await NativeRNPencilKitUtil.loadDrawing(handle, path);
+        return NativeRNPencilKitUtil.loadDrawing(handle, path);
       },
       getBase64Data: async () => {
         const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return await NativeRNPencilKitUtil.getBase64Data(handle);
+        return NativeRNPencilKitUtil.getBase64Data(handle);
       },
       getBase64PngData: async ({ scale = 0 } = { scale: 0 }) => {
         const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return await NativeRNPencilKitUtil.getBase64PngData(handle, scale);
+        return NativeRNPencilKitUtil.getBase64PngData(handle, scale).then(
+          (d) => `data:image/png;base64,${d}`,
+        );
       },
       getBase64JpegData: async ({ scale = 0, compression = 0 } = { scale: 0, compression: 0 }) => {
         const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return await NativeRNPencilKitUtil.getBase64JpegData(handle, scale, compression);
+        return NativeRNPencilKitUtil.getBase64JpegData(handle, scale, compression).then(
+          (d) => `data:image/jpeg;base64,${d}`,
+        );
       },
       loadBase64Data: async (base64) => {
         const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return await NativeRNPencilKitUtil.loadBase64Data(handle, base64);
+        return NativeRNPencilKitUtil.loadBase64Data(handle, base64);
       },
       setTool: ({ color, toolType, width }) =>
         Commands.setTool(

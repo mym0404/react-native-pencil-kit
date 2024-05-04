@@ -44,20 +44,22 @@ export default function App() {
           drawingPolicy={'anyinput'}
           backgroundColor={'#aaaaff22'}
         />
-        <Image
-          style={{
-            borderWidth: 1,
-            borderColor: '#2224',
-            borderRadius: 12,
-            position: 'absolute',
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'white',
-            width: 160,
-            height: 160,
-          }}
-          source={{ uri: `data:image/png;base64,${imageBase64}` }}
-        />
+        {imageBase64 ? (
+          <Image
+            style={{
+              borderWidth: 1,
+              borderColor: '#2224',
+              borderRadius: 12,
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'white',
+              width: 160,
+              height: 160,
+            }}
+            source={{ uri: imageBase64 }}
+          />
+        ) : null}
       </View>
       <View
         style={{
