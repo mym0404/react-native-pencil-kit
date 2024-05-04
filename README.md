@@ -45,7 +45,7 @@ import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-nati
 |-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------|---------|
 | alwaysBounceVertical              | A Boolean value that determines whether bouncing always occurs when vertical scrolling reaches the end of the content.         | true    |
 | alwaysBounceHorizontal            | A Boolean value that determines whether bouncing always occurs when horizontal scrolling reaches the end of the content view.  | true    |
-| isRulerActive                     | A Boolean value that indicates whether a ruler view is visible on the canvas.                                                  | true    |
+| isRulerActive                     | A Boolean value that indicates whether a ruler view is visible on the canvas.                                                  | false   |
 | drawingPolicy                     | The policy that controls the types of touches allowed when drawing on the canvas. This properties can be applied from iOS 14.0 | default |
 | backgroundColor                   | The canvas background color                                                                                                    | none    |
 | isOpaque                          | Whether the canvas is opaque                                                                                                   | true    |
