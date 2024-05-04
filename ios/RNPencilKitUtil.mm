@@ -16,21 +16,57 @@
 
 RCT_EXPORT_MODULE()
 
-- (dispatch_queue_t)methodQueue {
-  return dispatch_get_main_queue();
+- (RNPencilKit*)getView:(double)viewId {
+  return static_cast<RNPencilKit*>(
+      [self.bridge.uiManager viewForReactTag:[NSNumber numberWithDouble:viewId]]);
+  ;
+}
+- (void)doReject:(RCTPromiseRejectBlock)reject name:(NSString*)name {
+  reject(@"RNPencilKit", [@"failed to " stringByAppendingString:name],
+         [[NSError alloc] initWithDomain:@"RNPencilKit" code:444 userInfo:@{}]);
 }
 
 - (void)getBase64Data:(double)viewId
               resolve:(RCTPromiseResolveBlock)resolve
                reject:(RCTPromiseRejectBlock)reject {
   RCTExecuteOnMainQueue(^{
-    RNPencilKit* view = static_cast<RNPencilKit*>(
-        [self.bridge.uiManager viewForReactTag:[NSNumber numberWithDouble:viewId]]);
+    RNPencilKit* view = [self getView:viewId];
     NSString* ret = [view getBase64Data];
     if (ret) {
       resolve(ret);
     } else {
-      reject(@"RNPencilKit", @"failed to getBase64Data", [NSError new]);
+      [self doReject:reject name:@"getBase64Data"];
+    }
+  });
+}
+
+- (void)getBase64PngData:(double)viewId
+                   scale:(double)scale
+                 resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject {
+  RCTExecuteOnMainQueue(^{
+    RNPencilKit* view = [self getView:viewId];
+    NSString* ret = [view getBase64PngData:scale];
+    if (ret) {
+      resolve(ret);
+    } else {
+      [self doReject:reject name:@"getBase64PngData"];
+    }
+  });
+}
+
+- (void)getBase64JpegData:(double)viewId
+                    scale:(double)scale
+              compression:(double)compression
+                  resolve:(RCTPromiseResolveBlock)resolve
+                   reject:(RCTPromiseRejectBlock)reject {
+  RCTExecuteOnMainQueue(^{
+    RNPencilKit* view = [self getView:viewId];
+    NSString* ret = [view getBase64JpegData:scale compression:compression];
+    if (ret) {
+      resolve(ret);
+    } else {
+      [self doReject:reject name:@"getBase64JpegData"];
     }
   });
 }
@@ -40,13 +76,12 @@ RCT_EXPORT_MODULE()
             resolve:(RCTPromiseResolveBlock)resolve
              reject:(RCTPromiseRejectBlock)reject {
   RCTExecuteOnMainQueue(^{
-    RNPencilKit* view = static_cast<RNPencilKit*>(
-        [self.bridge.uiManager viewForReactTag:[NSNumber numberWithDouble:viewId]]);
+    RNPencilKit* view = [self getView:viewId];
     NSString* ret = [view saveDrawing:path];
     if (ret) {
       resolve(ret);
     } else {
-      reject(@"RNPencilKit", @"failed to saveDrawing", [NSError new]);
+      [self doReject:reject name:@"saveDrawing"];
     }
   });
 }
@@ -56,13 +91,12 @@ RCT_EXPORT_MODULE()
             resolve:(RCTPromiseResolveBlock)resolve
              reject:(RCTPromiseRejectBlock)reject {
   RCTExecuteOnMainQueue(^{
-    RNPencilKit* view = static_cast<RNPencilKit*>(
-        [self.bridge.uiManager viewForReactTag:[NSNumber numberWithDouble:viewId]]);
+    RNPencilKit* view = [self getView:viewId];
     BOOL ret = [view loadDrawing:path];
     if (ret) {
       resolve(@"");
     } else {
-      reject(@"RNPencilKit", @"failed to loadDrawing", [NSError new]);
+      [self doReject:reject name:@"loadDrawing"];
     }
   });
 }
@@ -72,13 +106,12 @@ RCT_EXPORT_MODULE()
                resolve:(RCTPromiseResolveBlock)resolve
                 reject:(RCTPromiseRejectBlock)reject {
   RCTExecuteOnMainQueue(^{
-    RNPencilKit* view = static_cast<RNPencilKit*>(
-        [self.bridge.uiManager viewForReactTag:[NSNumber numberWithDouble:viewId]]);
+    RNPencilKit* view = [self getView:viewId];
     BOOL ret = [view loadBase64Data:base64];
     if (ret) {
       resolve(@"");
     } else {
-      reject(@"RNPencilKit", @"failed to loadBase64Data", [NSError new]);
+      [self doReject:reject name:@"loadBase64Data"];
     }
   });
 }

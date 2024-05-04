@@ -40,6 +40,8 @@ export type PencilKitRef = {
   saveDrawing: (path: string) => Promise<string>;
   loadDrawing: (path: string) => Promise<void>;
   getBase64Data: () => Promise<string>;
+  getBase64PngData: (params?: { scale?: number }) => Promise<string>;
+  getBase64JpegData: (params?: { scale?: number; compression?: number }) => Promise<string>;
   loadBase64Data: (base64: string) => Promise<void>;
 };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -7,6 +7,8 @@ export interface Spec extends TurboModule {
   isiOSEqualsOrGreaterThan16_4(): boolean;
   getAvailableTools(): string[];
   getBase64Data(viewId: Double): Promise<string>;
+  getBase64PngData(viewId: Double, scale: Double): Promise<string>;
+  getBase64JpegData(viewId: Double, scale: Double, compression: Double): Promise<string>;
   saveDrawing(viewId: Double, path: string): Promise<string>;
   loadDrawing(viewId: Double, path: string): Promise<void>;
   loadBase64Data(viewId: Double, base64: string): Promise<void>;

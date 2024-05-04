@@ -50,6 +50,16 @@ function PencilKitComponent(
 
         return await NativeRNPencilKitUtil.getBase64Data(handle);
       },
+      getBase64PngData: async ({ scale = 0 } = { scale: 0 }) => {
+        const handle = findNodeHandle(nativeRef.current) ?? -1;
+
+        return await NativeRNPencilKitUtil.getBase64PngData(handle, scale);
+      },
+      getBase64JpegData: async ({ scale = 0, compression = 0 } = { scale: 0, compression: 0 }) => {
+        const handle = findNodeHandle(nativeRef.current) ?? -1;
+
+        return await NativeRNPencilKitUtil.getBase64JpegData(handle, scale, compression);
+      },
       loadBase64Data: async (base64) => {
         const handle = findNodeHandle(nativeRef.current) ?? -1;
 

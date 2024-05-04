@@ -97,6 +97,28 @@ getEmitter(const SharedViewEventEmitter emitter) {
   return [_view.drawing.dataRepresentation base64EncodedStringWithOptions:0];
 }
 
+- (NSString*)getBase64PngData:(double)scale {
+  NSData* data = _view.drawing.dataRepresentation;
+  if (!data) {
+    return nil;
+  }
+  UIImage* image = [_view.drawing imageFromRect:_view.bounds
+                                          scale:scale == 0 ? UIScreen.mainScreen.scale : scale];
+  NSData* imageData = UIImagePNGRepresentation(image);
+  return [imageData base64EncodedStringWithOptions:0];
+}
+
+- (NSString*)getBase64JpegData:(double)scale compression:(double)compression {
+  NSData* data = _view.drawing.dataRepresentation;
+  if (!data) {
+    return nil;
+  }
+  UIImage* image = [_view.drawing imageFromRect:_view.bounds
+                                          scale:scale == 0 ? UIScreen.mainScreen.scale : scale];
+  NSData* imageData = UIImageJPEGRepresentation(image, compression == 0 ? 0.93 : compression);
+  return [imageData base64EncodedStringWithOptions:0];
+}
+
 - (NSString*)saveDrawing:(NSString*)path {
   NSData* data = [_view.drawing dataRepresentation];
   if (!data) {

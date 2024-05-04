@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-native-pencil-kit';
 import { DocumentDirectoryPath } from '@dr.pogodin/react-native-fs';
 
@@ -31,18 +31,34 @@ export default function App() {
   const ref = useRef<PencilKitRef>(null);
 
   const path = `${DocumentDirectoryPath}/drawing.dat`;
-  const [base64, setBase64] = useState('');
+  const [imageBase64, setImageBase64] = useState('');
 
   return (
     <View style={{ width: '100%', height: '100%' }}>
-      <PencilKitView
-        ref={ref}
-        style={{ flex: 1 }}
-        alwaysBounceVertical={false}
-        alwaysBounceHorizontal={false}
-        drawingPolicy={'anyinput'}
-        backgroundColor={'#aaaaff22'}
-      />
+      <View style={{ flex: 1 }}>
+        <PencilKitView
+          ref={ref}
+          style={{ flex: 1 }}
+          alwaysBounceVertical={false}
+          alwaysBounceHorizontal={false}
+          drawingPolicy={'anyinput'}
+          backgroundColor={'#aaaaff22'}
+        />
+        <Image
+          style={{
+            borderWidth: 1,
+            borderColor: '#2224',
+            borderRadius: 12,
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'white',
+            width: 160,
+            height: 160,
+          }}
+          source={{ uri: `data:image/png;base64,${imageBase64}` }}
+        />
+      </View>
       <View
         style={{
           flexDirection: 'row',
@@ -58,10 +74,47 @@ export default function App() {
         <Btn onPress={() => ref.current?.clear()} text={'clear'} />
         <Btn onPress={() => ref.current?.undo()} text={'undo'} />
         <Btn onPress={() => ref.current?.redo()} text={'redo'} />
-        <Btn onPress={() => ref.current?.saveDrawing(path).then(console.log)} text={'save'} />
+        <Btn
+          onPress={() =>
+            ref.current
+              ?.saveDrawing(path)
+              .then((d) => console.log(`save success, length: ${d.length}`))
+          }
+          text={'save'}
+        />
         <Btn onPress={() => ref.current?.loadDrawing(path)} text={'load'} />
-        <Btn onPress={() => ref.current?.getBase64Data().then(setBase64)} text={'get base64'} />
-        <Btn onPress={() => ref.current?.loadBase64Data(base64)} text={'load base64'} />
+        <Btn
+          onPress={() =>
+            ref.current?.getBase64Data().then((d) => {
+              console.log(`get success, length: ${d.length}`);
+            })
+          }
+          text={'get base64'}
+        />
+        <Btn
+          onPress={() =>
+            ref.current?.getBase64PngData({}).then((d) => {
+              console.log(`get success, length: ${d.length}`);
+              setImageBase64(d);
+            })
+          }
+          text={'get base64 as png'}
+        />
+        <Btn
+          onPress={() =>
+            ref.current?.getBase64JpegData().then((d) => {
+              console.log(`get success, length: ${d.length}`);
+              setImageBase64(d);
+            })
+          }
+          text={'get base64 as jpeg'}
+        />
+        <Btn
+          onPress={() => {
+            ref.current?.loadBase64Data(imageBase64);
+          }}
+          text={'load base64'}
+        />
         {allPens.map((p) => (
           <Btn
             key={p}
