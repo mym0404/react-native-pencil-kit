@@ -37,7 +37,7 @@ import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-nati
 ```
 
 > [!NOTE]
-> You can explorer full example! [Full Example](https://github.com/mym0404/react-native-pencil-kit/blob/main/example/src/App.tsx)
+> You can explore full example! [Full Example](https://github.com/mym0404/react-native-pencil-kit/blob/main/example/src/App.tsx)
 
 ## Props
 
