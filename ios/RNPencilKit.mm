@@ -93,46 +93,41 @@ getEmitter(const SharedViewEventEmitter emitter) {
   [_view.undoManager undo];
 }
 
-- (void)saveDrawing:(NSString*)path {
+- (NSString*)getBase64Data {
+  return [_view.drawing.dataRepresentation base64EncodedStringWithOptions:0];
+}
+
+- (NSString*)saveDrawing:(NSString*)path {
   NSData* data = [_view.drawing dataRepresentation];
+  if (!data) {
+    return nil;
+  }
   NSError* error = nil;
   [data writeToURL:[[NSURL alloc] initFileURLWithPath:path]
            options:NSDataWritingAtomic
              error:&error];
   if (error) {
-    getEmitter(_eventEmitter)->onSaveDrawing({.success = false});
+    return nil;
   } else {
-    getEmitter(_eventEmitter)
-        ->onSaveDrawing(
-            {.success = true, .base64 = [[data base64EncodedStringWithOptions:0] UTF8String]});
+    return [data base64EncodedStringWithOptions:0];
   }
 }
 
-- (void)loadDrawing:(NSString*)path {
+- (BOOL)loadDrawing:(NSString*)path {
   NSURL* url = [[NSURL alloc] initFileURLWithPath:path];
   if (![[NSFileManager defaultManager] fileExistsAtPath:[url path]]) {
-    getEmitter(_eventEmitter)->onLoadDrawing({.success = false});
-    return;
+    return NO;
   }
 
   NSData* data = [[NSData alloc] initWithContentsOfURL:url];
-  BOOL result = [self loadWithData:data];
-  getEmitter(_eventEmitter)->onLoadDrawing({.success = result});
+  return [self loadWithData:data];
 }
 
-- (void)getBase64Data {
-  getEmitter(_eventEmitter)
-      ->onGetBase64Data({.success = true,
-                         .base64 = [[_view.drawing.dataRepresentation
-                             base64EncodedStringWithOptions:0] UTF8String]});
-}
-
-- (void)loadBase64Data:(NSString*)base64 {
+- (BOOL)loadBase64Data:(NSString*)base64 {
   NSData* data =
       [[NSData alloc] initWithBase64EncodedString:base64
                                           options:NSDataBase64DecodingIgnoreUnknownCharacters];
-  BOOL result = [self loadWithData:data];
-  getEmitter(_eventEmitter)->onLoadBase64({.success = result});
+  return [self loadWithData:data];
 }
 
 - (BOOL)loadWithData:(NSData*)data {

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-native-pencil-kit';
 import { DocumentDirectoryPath } from '@dr.pogodin/react-native-fs';
@@ -31,6 +31,7 @@ export default function App() {
   const ref = useRef<PencilKitRef>(null);
 
   const path = `${DocumentDirectoryPath}/drawing.dat`;
+  const [base64, setBase64] = useState('');
 
   return (
     <View style={{ width: '100%', height: '100%' }}>
@@ -59,8 +60,8 @@ export default function App() {
         <Btn onPress={() => ref.current?.redo()} text={'redo'} />
         <Btn onPress={() => ref.current?.saveDrawing(path).then(console.log)} text={'save'} />
         <Btn onPress={() => ref.current?.loadDrawing(path)} text={'load'} />
-        <Btn onPress={() => ref.current?.getBase64Data().then(console.log)} text={'get base64'} />
-        <Btn onPress={() => ref.current?.loadBase64Data('')} text={'load base64'} />
+        <Btn onPress={() => ref.current?.getBase64Data().then(setBase64)} text={'get base64'} />
+        <Btn onPress={() => ref.current?.loadBase64Data(base64)} text={'load base64'} />
         {allPens.map((p) => (
           <Btn
             key={p}

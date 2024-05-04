@@ -1,9 +1,9 @@
 import { type ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react';
-import { processColor, Text } from 'react-native';
+import { findNodeHandle, processColor, Text } from 'react-native';
 import { type PencilKitProps, type PencilKitRef, PencilKitUtil } from 'react-native-pencil-kit';
 
+import NativeRNPencilKitUtil from '../spec/NativeRNPencilKitUtil';
 import NativePencilKitView, { Commands } from '../spec/RNPencilKitNativeComponent';
-import { useLazyPromise } from '../util/useLazyPromise';
 
 function PencilKitComponent(
   {
@@ -26,17 +26,6 @@ function PencilKitComponent(
   ref: ForwardedRef<PencilKitRef>,
 ) {
   const nativeRef = useRef(null);
-  const {
-    resolve: resolveGetBase64Data,
-    reject: rejectGetBase64Data,
-    resetPromise: resetGetBase64DataPromise,
-  } = useLazyPromise<string>();
-
-  const {
-    resolve: resolveSaveDrawing,
-    reject: rejectSaveDrawing,
-    resetPromise: resetSaveDrawingPromise,
-  } = useLazyPromise<string>();
 
   useImperativeHandle(
     ref,
@@ -46,20 +35,26 @@ function PencilKitComponent(
       hideToolPicker: () => Commands.hideToolPicker(nativeRef.current!),
       redo: () => Commands.redo(nativeRef.current!),
       undo: () => Commands.undo(nativeRef.current!),
-      saveDrawing: (path) => {
-        const promise = resetSaveDrawingPromise();
-        Commands.saveDrawing(nativeRef.current!, path);
+      saveDrawing: async (path) => {
+        const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return promise;
+        return await NativeRNPencilKitUtil.saveDrawing(handle, path);
       },
-      loadDrawing: (path) => Commands.loadDrawing(nativeRef.current!, path),
-      getBase64Data: () => {
-        const promise = resetGetBase64DataPromise();
-        Commands.getBase64Data(nativeRef.current!);
+      loadDrawing: async (path) => {
+        const handle = findNodeHandle(nativeRef.current) ?? -1;
 
-        return promise;
+        return await NativeRNPencilKitUtil.loadDrawing(handle, path);
       },
-      loadBase64Data: (base64) => Commands.loadBase64Data(nativeRef.current!, base64),
+      getBase64Data: async () => {
+        const handle = findNodeHandle(nativeRef.current) ?? -1;
+
+        return await NativeRNPencilKitUtil.getBase64Data(handle);
+      },
+      loadBase64Data: async (base64) => {
+        const handle = findNodeHandle(nativeRef.current) ?? -1;
+
+        return await NativeRNPencilKitUtil.loadBase64Data(handle, base64);
+      },
       setTool: ({ color, toolType, width }) =>
         Commands.setTool(
           nativeRef.current!,
@@ -68,7 +63,7 @@ function PencilKitComponent(
           color ? (processColor(color) as number) : 0,
         ),
     }),
-    [resetSaveDrawingPromise, resetGetBase64DataPromise],
+    [],
   );
 
   if (!PencilKitUtil.isPencilKitAvailable()) {
@@ -95,20 +90,6 @@ function PencilKitComponent(
         onCanvasViewDidEndUsingTool,
         onCanvasViewDidFinishRendering,
         onCanvasViewDrawingDidChange,
-        onGetBase64Data: ({ nativeEvent: { success, base64 } }) => {
-          if (success) {
-            resolveGetBase64Data.current?.(base64 ?? '');
-          } else {
-            rejectGetBase64Data.current?.();
-          }
-        },
-        onSaveDrawing: ({ nativeEvent: { base64, success } }) => {
-          if (success) {
-            resolveSaveDrawing.current?.(base64 ?? '');
-          } else {
-            rejectSaveDrawing.current?.();
-          }
-        },
       }}
       {...rest}
     />

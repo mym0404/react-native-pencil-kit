@@ -26,12 +26,6 @@ export interface NativeProps extends ViewProps {
   onCanvasViewDidEndUsingTool?: DirectEventHandler<{}>;
   onCanvasViewDrawingDidChange?: DirectEventHandler<{}>;
   onCanvasViewDidFinishRendering?: DirectEventHandler<{}>;
-
-  // native command callback hack
-  onSaveDrawing?: DirectEventHandler<{ base64?: string; success: boolean }>;
-  onLoadDrawing?: DirectEventHandler<{ success: boolean }>;
-  onGetBase64Data?: DirectEventHandler<{ base64?: string; success: boolean }>;
-  onLoadBase64?: DirectEventHandler<{ success: boolean }>;
 }
 
 export interface PencilKitCommands {
@@ -40,10 +34,6 @@ export interface PencilKitCommands {
   hideToolPicker: (ref: React.ElementRef<ComponentType>) => void;
   redo: (ref: React.ElementRef<ComponentType>) => void;
   undo: (ref: React.ElementRef<ComponentType>) => void;
-  saveDrawing: (ref: React.ElementRef<ComponentType>, path: string) => void;
-  loadDrawing: (ref: React.ElementRef<ComponentType>, path: string) => string;
-  getBase64Data: (ref: React.ElementRef<ComponentType>) => void;
-  loadBase64Data: (ref: React.ElementRef<ComponentType>, base64: string) => void;
   setTool: (
     ref: React.ElementRef<ComponentType>,
     toolType: string,
@@ -53,17 +43,6 @@ export interface PencilKitCommands {
 }
 
 export const Commands: PencilKitCommands = codegenNativeCommands<PencilKitCommands>({
-  supportedCommands: [
-    'clear',
-    'showToolPicker',
-    'hideToolPicker',
-    'redo',
-    'undo',
-    'saveDrawing',
-    'loadDrawing',
-    'getBase64Data',
-    'loadBase64Data',
-    'setTool',
-  ],
+  supportedCommands: ['clear', 'showToolPicker', 'hideToolPicker', 'redo', 'undo', 'setTool'],
 });
 export default codegenNativeComponent<NativeProps>('RNPencilKit');

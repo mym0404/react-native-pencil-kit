@@ -36,11 +36,11 @@ export type PencilKitRef = {
   hideToolPicker: () => void;
   redo: () => void;
   undo: () => void;
-  saveDrawing: (path: string) => Promise<string>;
-  loadDrawing: (path: string) => void;
-  getBase64Data: () => Promise<string>;
-  loadBase64Data: (base64: string) => void;
   setTool: (params: { toolType: PencilKitTool; width?: number; color?: ColorValue }) => void;
+  saveDrawing: (path: string) => Promise<string>;
+  loadDrawing: (path: string) => Promise<void>;
+  getBase64Data: () => Promise<string>;
+  loadBase64Data: (base64: string) => Promise<void>;
 };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const PencilKit = forwardRef((props: PencilKitProps, ref: ForwardedRef<PencilKitRef>) => {
