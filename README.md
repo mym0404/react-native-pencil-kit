@@ -27,6 +27,7 @@ Link `PencilKit.framework` in the Xcode application project settings
 
 > With Fabric, we should access c++ functions and we should use objective-c++.
 > This prevents us from Apple SDK framework module importing and we cannot link PencilKit automatically at now.
+> If you are using `use_frameworks!`(dynamic linking), this configuration is maybe not required.
 
 ## Usage
 
