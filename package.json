@@ -143,6 +143,11 @@
   "codegenConfig": {
     "name": "RNPencilKitSpec",
     "type": "all",
-    "jsSrcsDir": "src/spec"
+    "jsSrcsDir": "src/spec",
+    "ios": {
+      "componentProvider": {
+        "RNPencilKit": "RNPencilKit"
+      }
+    }
   }
 }
