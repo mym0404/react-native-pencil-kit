@@ -28,7 +28,7 @@ export interface NativeProps extends ViewProps {
   onCanvasViewDidFinishRendering?: DirectEventHandler<{}>;
 }
 
-export interface PencilKitCommands {
+interface NativeCommands {
   clear: (ref: React.ElementRef<ComponentType>) => void;
   showToolPicker: (ref: React.ElementRef<ComponentType>) => void;
   hideToolPicker: (ref: React.ElementRef<ComponentType>) => void;
@@ -42,7 +42,7 @@ export interface PencilKitCommands {
   ) => void;
 }
 
-export const Commands: PencilKitCommands = codegenNativeCommands<PencilKitCommands>({
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: ['clear', 'showToolPicker', 'hideToolPicker', 'redo', 'undo', 'setTool'],
 });
 export default codegenNativeComponent<NativeProps>('RNPencilKit');
