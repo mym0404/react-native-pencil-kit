@@ -143,7 +143,7 @@ RCT_EXPORT_MODULE()
 - (NSArray<NSString*>*)getAvailableTools {
   if ([self isPencilKitAvailable]) {
     if ([self isiOSEqualsOrGreaterThan17]) {
-      return @[
+      NSArray<NSString*>* tools = @[
         @"pen",
         @"pencil",
         @"marker",
@@ -154,7 +154,14 @@ RCT_EXPORT_MODULE()
         @"eraserVector",
         @"eraserBitmap",
         @"eraserFixedWidthBitmap",
+        @"lasso",
       ];
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
+      if (@available(iOS 26.0, *)) {
+        return [tools arrayByAddingObject:@"reed"];
+      }
+#endif
+      return tools;
     } else {
       return @[
         @"pen",
@@ -162,6 +169,7 @@ RCT_EXPORT_MODULE()
         @"marker",
         @"eraserVector",
         @"eraserBitmap",
+        @"lasso",
       ];
     }
   } else {

@@ -11,6 +11,7 @@ const allPens = [
   'monoline',
   'watercolor',
   'fountainPen',
+  'reed',
 ] satisfies PencilKitTool[];
 
 const allErasers = [
@@ -131,6 +132,7 @@ export default function App() {
             text={p}
           />
         ))}
+        <Btn onPress={() => ref.current?.setTool({ toolType: 'lasso' })} text={'lasso'} />
         {allErasers.map((p) => (
           <Btn
             variant={2}

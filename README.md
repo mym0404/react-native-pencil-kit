@@ -87,9 +87,11 @@ import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-nati
 - fountainPen // ios 17
 - watercolor // ios 17
 - crayon // ios 17
+- reed // ios 26, built with Xcode 26 or later
 - eraserVector // width is supported from 16.4
 - eraserBitmap // width is supported from 16.4
 - eraserFixedWidthBitmap // ios 16.4
+- lasso // select strokes to move, copy or delete them
 ```
 
 ## Utils
