@@ -27,9 +27,11 @@ export type PencilKitTool =
   | 'fountainPen'
   | 'watercolor'
   | 'crayon'
+  | 'reed'
   | 'eraserVector'
   | 'eraserBitmap'
-  | 'eraserFixedWidthBitmap';
+  | 'eraserFixedWidthBitmap'
+  | 'lasso';
 export type PencilKitRef = {
   clear: () => void;
   showToolPicker: () => void;

@@ -240,6 +240,21 @@ getEmitter(const SharedViewEventEmitter emitter) {
                                           width:isWidthValid ? width : defaultWidth];
     }
   }
+  // PKInkTypeReed only exists in the iOS 26 SDK, so older Xcode versions skip it.
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
+  if (@available(iOS 26.0, *)) {
+    if (tool == "reed") {
+      _toolPicker.selectedTool = _view.tool =
+          [[PKInkingTool alloc] initWithInkType:PKInkTypeReed
+                                          color:isColorValid ? intToColor(color) : defaultColor
+                                          width:isWidthValid ? width : defaultWidth];
+    }
+  }
+#endif
+
+  if (tool == "lasso") {
+    _toolPicker.selectedTool = _view.tool = [[PKLassoTool alloc] init];
+  }
 
   if (tool == "eraserVector") {
     if (@available(iOS 16.4, *)) {
