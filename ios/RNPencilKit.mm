@@ -45,6 +45,16 @@ getEmitter(const SharedViewEventEmitter emitter) {
   [_toolPicker removeObserver:self];
 }
 
+// Fabric reuses this view for the next canvas mounted anywhere in the app, so
+// it must not carry the previous canvas's drawing or undo history. super runs
+// first: it detaches the event emitter, so the drawing change below is not
+// reported to the component that just unmounted.
+- (void)prepareForRecycle {
+  [super prepareForRecycle];
+  [_view setDrawing:[[PKDrawing alloc] init]];
+  [_view.undoManager removeAllActions];
+}
+
 - (void)updateProps:(Props::Shared const&)props oldProps:(Props::Shared const&)oldProps {
   const auto& prev = *std::static_pointer_cast<RNPencilKitProps const>(_props);
   const auto& next = *std::static_pointer_cast<RNPencilKitProps const>(props);
