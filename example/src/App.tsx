@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import PencilKitView, {
-  PencilKitUtil,
   type PencilKitRef,
   type PencilKitTool,
+  PencilKitUtil,
 } from 'react-native-pencil-kit';
 import { DocumentDirectoryPath } from '@dr.pogodin/react-native-fs';
 
@@ -140,9 +140,9 @@ export default function App() {
             text={p}
           />
         ))}
-        {availableTools.has('lasso') && (
+        {availableTools.has('lasso') ? (
           <Btn onPress={() => ref.current?.setTool({ toolType: 'lasso' })} text={'lasso'} />
-        )}
+        ) : null}
         {availableErasers.map((p) => (
           <Btn
             variant={2}
