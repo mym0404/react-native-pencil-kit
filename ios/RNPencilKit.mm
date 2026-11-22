@@ -17,6 +17,7 @@ getEmitter(const SharedViewEventEmitter emitter) {
 @end
 
 @implementation RNPencilKit {
+  NSUndoManager* _canvasUndoManager;
   PKCanvasView* _Nonnull _view;
   PKToolPicker* _Nullable _toolPicker;
 }
@@ -26,6 +27,7 @@ getEmitter(const SharedViewEventEmitter emitter) {
     static const auto defaultProps = std::make_shared<const RNPencilKitProps>();
     _props = defaultProps;
 
+    _canvasUndoManager = [[NSUndoManager alloc] init];
     _view = [[PKCanvasView alloc] initWithFrame:frame];
     _view.delegate = self;
     _toolPicker = [[PKToolPicker alloc] init];
@@ -41,6 +43,15 @@ getEmitter(const SharedViewEventEmitter emitter) {
 - (void)dealloc {
   [_toolPicker removeObserver:_view];
   [_toolPicker removeObserver:self];
+}
+
+// PencilKit keeps drawing, tool and selection state on the native canvas.
++ (BOOL)shouldBeRecycled {
+  return NO;
+}
+
+- (NSUndoManager*)undoManager {
+  return _canvasUndoManager;
 }
 
 - (void)updateProps:(Props::Shared const&)props oldProps:(Props::Shared const&)oldProps {
