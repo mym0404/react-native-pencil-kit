@@ -7,19 +7,16 @@
 
 #import "RNPencilKitUtil.h"
 #import "RNPencilKit.h"
-#import <React/RCTBridge.h>
-#import <React/RCTUIManager.h>
+#import <React/RCTUtils.h>
 
 @implementation RNPencilKitUtil
 
-@synthesize bridge = _bridge;
+@synthesize viewRegistry_DEPRECATED = _viewRegistry_DEPRECATED;
 
 RCT_EXPORT_MODULE()
 
 - (RNPencilKit*)getView:(double)viewId {
-  return static_cast<RNPencilKit*>(
-      [self.bridge.uiManager viewForReactTag:[NSNumber numberWithDouble:viewId]]);
-  ;
+  return static_cast<RNPencilKit*>([self.viewRegistry_DEPRECATED viewForReactTag:@(viewId)]);
 }
 - (void)doReject:(RCTPromiseRejectBlock)reject name:(NSString*)name {
   reject(@"RNPencilKit", [@"failed to " stringByAppendingString:name],

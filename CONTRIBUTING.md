@@ -11,68 +11,17 @@ This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/f
 - The library package in the root directory.
 - An example app in the `example/` directory.
 
-To get started with the project, run `yarn` in the root directory to install the required dependencies for each package:
+Install the toolchain and workspace dependencies from the repository root:
 
 ```sh
-yarn
+mise install
+mise exec -- yarn install --immutable
+mise exec -- yarn pod
 ```
 
-> Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development.
+Start Metro with `yarn dev`. In a second terminal, run `yarn ios --simulator "PencilKit iPad"` or substitute an iOS simulator name from `xcrun simctl list devices available`. Use `mise exec --` before each command if your shell does not activate mise. Edit the native library through `example/ios/PencilKitExample.xcworkspace`. JavaScript changes reload through Metro. Rebuild the app after changing native code.
 
-The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
-
-It is configured to use the local version of the library, so any changes you make to the library's source code will be reflected in the example app. Changes to the library's JavaScript code will be reflected in the example app without a rebuild, but native code changes will require a rebuild of the example app.
-
-If you want to use Android Studio or XCode to edit the native code, you can open the `example/android` or `example/ios` directories respectively in those editors. To edit the Objective-C or Swift files, open `example/ios/PencilKitExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-pencil-kit`.
-
-To edit the Java or Kotlin files, open `example/android` in Android studio and find the source files at `react-native-pencil-kit` under `Android`.
-
-You can use various commands from the root directory to work with the project.
-
-To start the packager:
-
-```sh
-yarn example start
-```
-
-To run the example app on Android:
-
-```sh
-yarn example android
-```
-
-To run the example app on iOS:
-
-```sh
-yarn example ios
-```
-
-To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
-
-```sh
-Running "PencilKitExample" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
-```
-
-Note the `"fabric":true` and `"concurrentRoot":true` properties.
-
-Make sure your code passes TypeScript and ESLint. Run the following to verify:
-
-```sh
-yarn typecheck
-yarn lint
-```
-
-To fix formatting errors, run the following:
-
-```sh
-yarn lint --fix
-```
-
-Remember to add tests for your change if possible. Run the unit tests by:
-
-```sh
-yarn test
-```
+Run `yarn lint` to check JavaScript, Objective-C++ formatting, and TypeScript. Run `yarn build` to generate CommonJS, ES modules, and type declarations.
 
 ### Commit message convention
 
@@ -87,35 +36,13 @@ We follow the [conventional commits specification](https://www.conventionalcommi
 
 Our pre-commit hooks verify that your commit message matches this format when committing.
 
-### Linting and tests
+### Changesets and publishing
 
-[ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
+Run `yarn changeset` to describe a library change and choose its version bump. Commit the generated Markdown file with the change. For an example-only or CI change, use `yarn changeset --empty`. The example workspace is private.
 
-We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
+CI checks the release plan on pull requests to `main` and `next`. The Release workflow opens a version PR that updates the package version, changelog, and lockfiles. Merging that PR publishes the library to npm and creates a GitHub release. Stable releases use `main`. To start a beta cycle on `next`, run `yarn changeset pre enter beta` and commit the generated prerelease state. Run `yarn changeset pre exit` before promoting the beta to `main`.
 
-Our pre-commit hooks verify that the linter and tests pass when committing.
-
-### Publishing to npm
-
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
-
-To publish new versions, run the following:
-
-```sh
-yarn release
-```
-
-### Scripts
-
-The `package.json` file contains various scripts for common tasks:
-
-- `yarn`: setup project by installing dependencies.
-- `yarn typecheck`: type-check files with TypeScript.
-- `yarn lint`: lint files with ESLint.
-- `yarn test`: run unit tests with Jest.
-- `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
-- `yarn example ios`: run the example app on iOS.
+Configure npm trusted publishing for `mym0404/react-native-pencil-kit`, GitHub Actions workflow `release.yml`, with direct publish permission. Set the repository secret `GH_TOKEN` to a token with contents, pull request, and workflow permissions so version PRs trigger CI and release tags can reference workflow changes.
 
 ### Sending a pull request
 

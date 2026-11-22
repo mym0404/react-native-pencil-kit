@@ -5,8 +5,6 @@
 #import <react/renderer/components/RNPencilKitSpec/Props.h>
 #import <react/renderer/components/RNPencilKitSpec/RCTComponentViewHelpers.h>
 
-#import "RCTFabricComponentsPlugins.h"
-
 using namespace facebook::react;
 
 static inline const std::shared_ptr<const RNPencilKitEventEmitter>
@@ -19,6 +17,7 @@ getEmitter(const SharedViewEventEmitter emitter) {
 @end
 
 @implementation RNPencilKit {
+  NSUndoManager* _canvasUndoManager;
   PKCanvasView* _Nonnull _view;
   PKToolPicker* _Nullable _toolPicker;
 }
@@ -28,6 +27,7 @@ getEmitter(const SharedViewEventEmitter emitter) {
     static const auto defaultProps = std::make_shared<const RNPencilKitProps>();
     _props = defaultProps;
 
+    _canvasUndoManager = [[NSUndoManager alloc] init];
     _view = [[PKCanvasView alloc] initWithFrame:frame];
     _view.delegate = self;
     _toolPicker = [[PKToolPicker alloc] init];
@@ -45,14 +45,13 @@ getEmitter(const SharedViewEventEmitter emitter) {
   [_toolPicker removeObserver:self];
 }
 
-// Fabric reuses this view for the next canvas mounted anywhere in the app, so
-// it must not carry the previous canvas's drawing or undo history. super runs
-// first: it detaches the event emitter, so the drawing change below is not
-// reported to the component that just unmounted.
-- (void)prepareForRecycle {
-  [super prepareForRecycle];
-  [_view setDrawing:[[PKDrawing alloc] init]];
-  [_view.undoManager removeAllActions];
+// PencilKit keeps drawing, tool and selection state on the native canvas.
++ (BOOL)shouldBeRecycled {
+  return NO;
+}
+
+- (NSUndoManager*)undoManager {
+  return _canvasUndoManager;
 }
 
 - (void)updateProps:(Props::Shared const&)props oldProps:(Props::Shared const&)oldProps {
@@ -78,8 +77,8 @@ getEmitter(const SharedViewEventEmitter emitter) {
   if (prev.isOpaque ^ next.isOpaque)
     [_view setOpaque:next.isOpaque];
 
-  if (prev.backgroundColor ^ next.backgroundColor) {
-    [_view setBackgroundColor:intToColor(next.backgroundColor)];
+  if (prev.canvasBackgroundColor ^ next.canvasBackgroundColor) {
+    [_view setBackgroundColor:intToColor(next.canvasBackgroundColor)];
   }
 
   [super updateProps:props oldProps:oldProps];
