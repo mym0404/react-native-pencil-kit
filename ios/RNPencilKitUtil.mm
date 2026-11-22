@@ -138,32 +138,25 @@ RCT_EXPORT_MODULE()
 }
 
 - (NSArray<NSString*>*)getAvailableTools {
-  if ([self isPencilKitAvailable]) {
-    if ([self isiOSEqualsOrGreaterThan17]) {
-      return @[
-        @"pen",
-        @"pencil",
-        @"marker",
-        @"monoline",
-        @"fountainPen",
-        @"watercolor",
-        @"crayon",
-        @"eraserVector",
-        @"eraserBitmap",
-        @"eraserFixedWidthBitmap",
-      ];
-    } else {
-      return @[
-        @"pen",
-        @"pencil",
-        @"marker",
-        @"eraserVector",
-        @"eraserBitmap",
-      ];
-    }
-  } else {
+  if (![self isPencilKitAvailable].boolValue) {
     return @[];
   }
+
+  NSMutableArray<NSString*>* tools = [@[ @"pen", @"pencil", @"marker" ] mutableCopy];
+  if (@available(iOS 17.0, *)) {
+    [tools addObjectsFromArray:@[ @"monoline", @"fountainPen", @"watercolor", @"crayon" ]];
+  }
+  [tools addObjectsFromArray:@[ @"eraserVector", @"eraserBitmap" ]];
+  if (@available(iOS 16.4, *)) {
+    [tools addObject:@"eraserFixedWidthBitmap"];
+  }
+  [tools addObject:@"lasso"];
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
+  if (@available(iOS 26.0, *)) {
+    [tools addObject:@"reed"];
+  }
+#endif
+  return tools;
 }
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
