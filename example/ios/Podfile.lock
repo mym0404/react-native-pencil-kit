@@ -2148,7 +2148,7 @@ SPEC CHECKSUMS:
   ReactCommon: b63ce798b898ed77c6cfdeb80b18080161f52ed5
   ReactNativeDependencies: a5164c3ebbe90d992022b5d9cbabbf770a6d7d05
   ReactNativeFs: c0b2d8faaa402ae3224aa2c098aec9212fdc392e
-  RNPencilKit: 45d21eb2184a23f4569d7f4460d503f5e274aaac
+  RNPencilKit: 57e5e0e9f61aa10b7d835d4bfed46e0bf0fa858f
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
 
