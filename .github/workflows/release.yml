@@ -1,0 +1,162 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - next
+
+permissions:
+  contents: read
+
+env:
+  PRERELEASE_TAG: beta
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  select-mode:
+    if: github.ref_name == 'main' || github.ref_name == 'next'
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.publish-plan.outputs.mode || steps.select.outputs.mode }}
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Setup release
+        id: setup
+        uses: ./.github/actions/setup-release
+        with:
+          tools: node yarn
+
+      - name: Verify prerelease state
+        if: steps.setup.outputs.current == 'true'
+        env:
+          RELEASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          prerelease_state=.changeset/pre.json
+          if [[ "${RELEASE_BRANCH}" == "next" ]]; then
+            jq -e --arg tag "${PRERELEASE_TAG}" '.mode == "pre" and .tag == $tag' "${prerelease_state}"
+          elif [[ -f "${prerelease_state}" ]]; then
+            jq -e --arg tag "${PRERELEASE_TAG}" '.mode == "exit" and .tag == $tag' "${prerelease_state}"
+          fi
+
+      - name: Select release mode
+        if: steps.setup.outputs.current == 'true'
+        id: select
+        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+
+      - name: Check for unpublished versions when release mode is none
+        if: steps.select.outputs.mode == 'none' && github.event_name == 'push'
+        id: publish-plan
+        run: |
+          publish_plan="${RUNNER_TEMP}/changeset-publish-plan.json"
+          yarn changeset publish-plan --output "${publish_plan}"
+          unpublished_count=$(jq '.plan | length' "${publish_plan}")
+          if (( unpublished_count > 0 )); then
+            echo "mode=publish" >> "${GITHUB_OUTPUT}"
+          fi
+
+  version:
+    needs: select-mode
+    if: needs.select-mode.outputs.mode == 'version'
+    runs-on: macos-26
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Setup release
+        id: setup
+        uses: ./.github/actions/setup-release
+        with:
+          tools: node yarn ruby
+
+      - name: Create or update version pull request
+        if: steps.setup.outputs.current == 'true'
+        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: yarn release:version
+          commit-message: 'chore: version packages'
+          pr-title: 'chore: version packages'
+          pr-base-branch: ${{ github.ref_name }}
+
+  publish:
+    needs: select-mode
+    if: >-
+      needs.select-mode.outputs.mode == 'publish' ||
+      (github.event_name == 'workflow_dispatch' && needs.select-mode.outputs.mode == 'none')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout release commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Setup release
+        id: setup
+        uses: ./.github/actions/setup-release
+        with:
+          tools: node yarn clang-format
+
+      - name: Verify release branch
+        if: steps.setup.outputs.current == 'true'
+        env:
+          RELEASE_BRANCH: ${{ github.ref_name }}
+        run: |
+          prerelease_state=.changeset/pre.json
+          if [[ "${RELEASE_BRANCH}" == "next" ]]; then
+            jq -e --arg tag "${PRERELEASE_TAG}" '.mode == "pre" and .tag == $tag' "${prerelease_state}"
+            jq -e --arg tag "${PRERELEASE_TAG}" '.version | test("^[0-9]+\\.[0-9]+\\.[0-9]+-" + $tag + "\\.[0-9]+$")' package.json
+          else
+            test ! -f "${prerelease_state}"
+            jq -e '.version | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")' package.json
+          fi
+
+      - name: Publish packages
+        id: publish
+        if: steps.setup.outputs.current == 'true'
+        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
+        with:
+          github-token: ${{ github.token }}
+          script: yarn release
+          create-github-releases: false
+          push-git-tags: false
+
+      - name: Create version tag and GitHub release
+        if: steps.setup.outputs.current == 'true' && steps.publish.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          version=$(jq -r '.version' package.json)
+          tag="v${version}"
+          if gh release view "${tag}" > /dev/null 2>&1; then
+            echo "Release ${version} already exists."
+            exit 0
+          fi
+          if [[ "${version}" == *"-${PRERELEASE_TAG}."* ]]; then
+            release_flags=(--prerelease --latest=false)
+          else
+            release_flags=(--latest)
+          fi
+          gh release create "${tag}" --target "${RELEASE_SHA}" \
+            --title "${version}" --generate-notes "${release_flags[@]}"

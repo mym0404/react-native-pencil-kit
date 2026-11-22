@@ -37,12 +37,14 @@
     "lint:ios": "./script/clang-lint.sh",
     "clean": "del-cli example/ios/build lib",
     "prepare": "husky",
-    "release": "release-it",
-    "release:pre": "release-it pre",
+    "release": "yarn lint && yarn build && changeset publish --no-git-tag",
     "xcode": "open $(pwd)/example/ios/PencilKitExample.xcworkspace",
-    "pod": "cd example/ios && bundle install && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install",
-    "codegen": "yarn react-native codegen --path example/ --outputPath example/ios",
-    "prepack": "bob build"
+    "pod": "cd example/ios && bundle install && bundle exec pod install",
+    "codegen": "yarn example react-native codegen --platform ios --path . --outputPath ios",
+    "prepack": "yarn build",
+    "changeset": "changeset",
+    "build": "bob build",
+    "release:version": "changeset version && yarn install --mode=update-lockfile && yarn pod"
   },
   "keywords": [
     "react-native",
@@ -71,60 +73,42 @@
   },
   "homepage": "https://github.com/mym0404/react-native-pencil-kit#readme",
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.3",
     "@commitlint/config-conventional": "^17.0.2",
     "@mj-studio/eslint-config-react": "^1.0.7",
-    "@react-native/eslint-config": "0.74.81",
-    "@release-it/conventional-changelog": "^5.0.0",
+    "@react-native/babel-preset": "0.88.1",
+    "@react-native/eslint-config": "0.88.1",
     "@types/jest": "^29.5.5",
-    "@types/react": "^18.2.44",
+    "@types/react": "^19.2.0",
     "commitlint": "^17.0.2",
     "del-cli": "^5.1.0",
     "eslint": "^8.51.0",
     "eslint-plugin-jest": "^28.2.0",
     "husky": "^9.0.11",
     "prettier": "3.2.5",
-    "react": "18.2.0",
-    "react-native": "0.74.1",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
     "react-native-builder-bob": "^0.23.2",
-    "release-it": "^15.0.0",
     "turbo": "^1.10.7",
-    "typescript": "~5.3.3"
-  },
-  "resolutions": {
-    "@types/react": "^18.2.44"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
   },
   "workspaces": [
+    ".",
     "example"
   ],
-  "packageManager": "yarn@4.10.3+sha512.c38cafb5c7bb273f3926d04e55e1d8c9dfa7d9c3ea1f36a4868fa028b9e5f72298f0b7f401ad5eb921749eb012eb1c3bb74bf7503df3ee43fd600d14a018266f",
+  "packageManager": "yarn@4.19.0",
   "commitlint": {
     "extends": [
       "@commitlint/config-conventional"
     ]
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": "chore: release ${version} [skip ci]",
-      "tagName": "v${version}"
-    },
-    "npm": {
-      "publish": true
-    },
-    "github": {
-      "release": true
-    },
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "angular"
-      }
-    }
   },
   "react-native-builder-bob": {
     "source": "src",

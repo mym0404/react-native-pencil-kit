@@ -2,10 +2,9 @@
 #import <XCTest/XCTest.h>
 
 #import <React/RCTLog.h>
-#import <React/RCTRootView.h>
+#import <PencilKit/PencilKit.h>
 
-#define TIMEOUT_SECONDS 600
-#define TEXT_TO_LOOK_FOR @"Welcome to React"
+#define TIMEOUT_SECONDS 30
 
 @interface PencilKitExampleTests : XCTestCase
 
@@ -26,9 +25,8 @@
   return NO;
 }
 
-- (void)testRendersWelcomeScreen
+- (void)testRendersPencilKitCanvas
 {
-  UIViewController *vc = [[[RCTSharedApplication() delegate] window] rootViewController];
   NSDate *date = [NSDate dateWithTimeIntervalSinceNow:TIMEOUT_SECONDS];
   BOOL foundElement = NO;
 
@@ -46,13 +44,19 @@
     [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
     [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
 
-    foundElement = [self findSubviewInView:vc.view
-                                  matching:^BOOL(UIView *view) {
-                                    if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
-                                      return YES;
-                                    }
-                                    return NO;
-                                  }];
+    for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
+      if (![scene isKindOfClass:UIWindowScene.class]) {
+        continue;
+      }
+      UIWindowScene *windowScene = (UIWindowScene *)scene;
+      foundElement = [self findSubviewInView:windowScene.keyWindow.rootViewController.view
+                                    matching:^BOOL(UIView *view) {
+                                      return [view isKindOfClass:PKCanvasView.class];
+                                    }];
+      if (foundElement) {
+        break;
+      }
+    }
   }
 
 #ifdef DEBUG
@@ -60,7 +64,7 @@
 #endif
 
   XCTAssertNil(redboxError, @"RedBox error: %@", redboxError);
-  XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
+  XCTAssertTrue(foundElement, @"Couldn't find a PencilKit canvas in %d seconds", TIMEOUT_SECONDS);
 }
 
 @end

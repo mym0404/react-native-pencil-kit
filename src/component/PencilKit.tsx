@@ -1,23 +1,27 @@
-import { type ForwardedRef, forwardRef } from 'react';
-import { type ColorValue, Text, type ViewProps } from 'react-native';
-import type { DirectEventHandler, WithDefault } from 'react-native/Libraries/Types/CodegenTypes';
+import {
+  type ForwardedRef,
+  forwardRef,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+} from 'react';
+import { type CodegenTypes, type ColorValue, Text, type ViewProps } from 'react-native';
 
 export type PencilKitProps = {
   alwaysBounceVertical?: boolean;
   alwaysBounceHorizontal?: boolean;
   isRulerActive?: boolean;
   backgroundColor?: ColorValue;
-  drawingPolicy?: WithDefault<'default' | 'anyinput' | 'pencilonly', 'default'>;
+  drawingPolicy?: CodegenTypes.WithDefault<'default' | 'anyinput' | 'pencilonly', 'default'>;
   isOpaque?: boolean;
 
-  onToolPickerVisibilityDidChange?: DirectEventHandler<{}>;
-  onToolPickerIsRulerActiveDidChange?: DirectEventHandler<{}>;
-  onToolPickerFramesObscuredDidChange?: DirectEventHandler<{}>;
-  onToolPickerSelectedToolDidChange?: DirectEventHandler<{}>;
-  onCanvasViewDidBeginUsingTool?: DirectEventHandler<{}>;
-  onCanvasViewDidEndUsingTool?: DirectEventHandler<{}>;
-  onCanvasViewDrawingDidChange?: DirectEventHandler<{}>;
-  onCanvasViewDidFinishRendering?: DirectEventHandler<{}>;
+  onToolPickerVisibilityDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onToolPickerIsRulerActiveDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onToolPickerFramesObscuredDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onToolPickerSelectedToolDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDidBeginUsingTool?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDidEndUsingTool?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDrawingDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDidFinishRendering?: CodegenTypes.DirectEventHandler<{}>;
 } & ViewProps;
 export type PencilKitTool =
   | 'pen'
@@ -44,7 +48,12 @@ export type PencilKitRef = {
   getBase64JpegData: (params?: { scale?: number; compression?: number }) => Promise<string>;
   loadBase64Data: (base64: string) => Promise<void>;
 };
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const PencilKit = forwardRef((props: PencilKitProps, ref: ForwardedRef<PencilKitRef>) => {
-  return <Text>{"This platform doesn't support pencilkit"}</Text>;
-});
+export type PencilKitComponentType = ForwardRefExoticComponent<
+  PencilKitProps & RefAttributes<PencilKitRef>
+>;
+
+export const PencilKit: PencilKitComponentType = forwardRef(
+  (_props: PencilKitProps, _ref: ForwardedRef<PencilKitRef>) => {
+    return <Text>{"This platform doesn't support pencilkit"}</Text>;
+  },
+);

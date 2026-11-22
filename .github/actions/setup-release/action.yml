@@ -1,0 +1,36 @@
+name: Setup release
+description: Set up release tools only if the checked-out commit is still the branch head
+
+inputs:
+  tools:
+    description: mise tools required by the job
+    required: true
+
+outputs:
+  current:
+    description: Whether the commit is the branch head
+    value: ${{ steps.current.outputs.matches }}
+
+runs:
+  using: composite
+  steps:
+    - name: Verify current branch head
+      id: current
+      shell: bash
+      env:
+        EXPECTED_SHA: ${{ github.sha }}
+        RELEASE_BRANCH: ${{ github.ref_name }}
+      run: |
+        branch_head=$(git ls-remote --exit-code origin "refs/heads/${RELEASE_BRANCH}" | cut -f1)
+        if [[ "${branch_head}" == "${EXPECTED_SHA}" ]]; then
+          echo "matches=true" >> "${GITHUB_OUTPUT}"
+        else
+          echo "Ignoring stale release run for ${EXPECTED_SHA}; ${RELEASE_BRANCH} is now ${branch_head}."
+          echo "matches=false" >> "${GITHUB_OUTPUT}"
+        fi
+
+    - name: Setup
+      if: steps.current.outputs.matches == 'true'
+      uses: ./.github/actions/setup
+      with:
+        tools: ${{ inputs.tools }}
