@@ -1,44 +1,41 @@
 import type React from 'react';
-import { type ComponentType } from 'react';
-import type { ViewProps } from 'react-native';
-import type {
-  DirectEventHandler,
-  Double,
-  Int32,
-  WithDefault,
-} from 'react-native/Libraries/Types/CodegenTypes';
-import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
-import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import {
+  codegenNativeCommands,
+  codegenNativeComponent,
+  type CodegenTypes,
+  type HostComponent,
+  type ViewProps,
+} from 'react-native';
 
 export interface NativeProps extends ViewProps {
   alwaysBounceVertical: boolean;
   alwaysBounceHorizontal: boolean;
   isRulerActive: boolean;
-  backgroundColor: Int32;
-  drawingPolicy?: WithDefault<'default' | 'anyinput' | 'pencilonly', 'default'>;
+  canvasBackgroundColor: CodegenTypes.Int32;
+  drawingPolicy?: CodegenTypes.WithDefault<'default' | 'anyinput' | 'pencilonly', 'default'>;
   isOpaque?: boolean;
 
-  onToolPickerVisibilityDidChange?: DirectEventHandler<{}>;
-  onToolPickerIsRulerActiveDidChange?: DirectEventHandler<{}>;
-  onToolPickerFramesObscuredDidChange?: DirectEventHandler<{}>;
-  onToolPickerSelectedToolDidChange?: DirectEventHandler<{}>;
-  onCanvasViewDidBeginUsingTool?: DirectEventHandler<{}>;
-  onCanvasViewDidEndUsingTool?: DirectEventHandler<{}>;
-  onCanvasViewDrawingDidChange?: DirectEventHandler<{}>;
-  onCanvasViewDidFinishRendering?: DirectEventHandler<{}>;
+  onToolPickerVisibilityDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onToolPickerIsRulerActiveDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onToolPickerFramesObscuredDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onToolPickerSelectedToolDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDidBeginUsingTool?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDidEndUsingTool?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDrawingDidChange?: CodegenTypes.DirectEventHandler<{}>;
+  onCanvasViewDidFinishRendering?: CodegenTypes.DirectEventHandler<{}>;
 }
 
 interface NativeCommands {
-  clear: (ref: React.ElementRef<ComponentType>) => void;
-  showToolPicker: (ref: React.ElementRef<ComponentType>) => void;
-  hideToolPicker: (ref: React.ElementRef<ComponentType>) => void;
-  redo: (ref: React.ElementRef<ComponentType>) => void;
-  undo: (ref: React.ElementRef<ComponentType>) => void;
+  clear: (ref: React.ComponentRef<HostComponent<NativeProps>>) => void;
+  showToolPicker: (ref: React.ComponentRef<HostComponent<NativeProps>>) => void;
+  hideToolPicker: (ref: React.ComponentRef<HostComponent<NativeProps>>) => void;
+  redo: (ref: React.ComponentRef<HostComponent<NativeProps>>) => void;
+  undo: (ref: React.ComponentRef<HostComponent<NativeProps>>) => void;
   setTool: (
-    ref: React.ElementRef<ComponentType>,
+    ref: React.ComponentRef<HostComponent<NativeProps>>,
     toolType: string,
-    width?: Double,
-    color?: Int32,
+    width?: CodegenTypes.Double,
+    color?: CodegenTypes.Int32,
   ) => void;
 }
 

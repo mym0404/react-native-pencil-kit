@@ -31,8 +31,9 @@ React Native Pencil Kit - iOS PencilKit framework porting library for React Nati
 - `yarn dev`: Start Metro bundler for example app
 
 ### Release
-- `yarn release`: Create a new release with conventional changelog
-- `yarn release:pre`: Create a pre-release
+- `yarn changeset`: Record a library change and its version bump
+- `yarn release:version`: Apply pending changesets and update lockfiles
+- The Release workflow publishes stable versions from `main` and beta versions from `next`.
 
 ## Architecture
 

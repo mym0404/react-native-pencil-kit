@@ -1,9 +1,17 @@
-import { type ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react';
+import {
+  type ComponentRef,
+  type ForwardedRef,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+} from 'react';
 import { findNodeHandle, processColor, Text } from 'react-native';
-import { type PencilKitProps, type PencilKitRef, PencilKitUtil } from 'react-native-pencil-kit';
 
 import NativeRNPencilKitUtil from '../spec/NativeRNPencilKitUtil';
 import NativePencilKitView, { Commands } from '../spec/RNPencilKitNativeComponent';
+import { PencilKitUtil } from '../util/PencilKitUtil';
+
+import type { PencilKitComponentType, PencilKitProps, PencilKitRef } from './PencilKit';
 
 function PencilKitComponent(
   {
@@ -25,7 +33,7 @@ function PencilKitComponent(
   }: PencilKitProps,
   ref: ForwardedRef<PencilKitRef>,
 ) {
-  const nativeRef = useRef(null);
+  const nativeRef = useRef<ComponentRef<typeof NativePencilKitView>>(null);
 
   useImperativeHandle(
     ref,
@@ -94,7 +102,7 @@ function PencilKitComponent(
         alwaysBounceVertical,
         isRulerActive,
         drawingPolicy,
-        backgroundColor: processColor(backgroundColor) as number,
+        canvasBackgroundColor: processColor(backgroundColor) as number,
         isOpaque,
         onToolPickerFramesObscuredDidChange,
         onToolPickerIsRulerActiveDidChange,
@@ -110,4 +118,4 @@ function PencilKitComponent(
   );
 }
 
-export const PencilKit = forwardRef(PencilKitComponent);
+export const PencilKit: PencilKitComponentType = forwardRef(PencilKitComponent);

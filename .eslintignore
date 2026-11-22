@@ -3,3 +3,5 @@ node_modules/
 docs/
 **/.gradle/
 **/build
+example/ios/Pods/
+example/vendor/

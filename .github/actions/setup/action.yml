@@ -1,31 +1,27 @@
 name: Setup
-description: Setup Node.js and install dependencies
+description: Install the project toolchain and locked Yarn dependencies
+
+inputs:
+  tools:
+    description: mise tools required by the job
+    default: node yarn clang-format
 
 runs:
   using: composite
   steps:
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
+    - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
       with:
-        node-version-file: .nvmrc
+        install_args: ${{ inputs.tools }}
+        cache: true
 
-    - name: Enable Corepack
-      run: corepack enable
+    - id: yarn-cache
       shell: bash
+      run: echo "path=$(yarn config get cacheFolder)" >> "$GITHUB_OUTPUT"
 
-    - name: Cache dependencies
-      id: yarn-cache
-      uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
-        path: |
-          **/node_modules
-          .yarn/install-state.gz
-        key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}-${{ hashFiles('**/package.json', '!node_modules/**') }}
-        restore-keys: |
-          ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
-          ${{ runner.os }}-yarn-
+        path: ${{ steps.yarn-cache.outputs.path }}
+        key: yarn-${{ runner.os }}-${{ hashFiles('mise.toml', 'yarn.lock') }}
 
-    - name: Install dependencies
-      if: steps.yarn-cache.outputs.cache-hit != 'true'
+    - shell: bash
       run: yarn install --immutable
-      shell: bash

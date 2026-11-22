@@ -1,0 +1,5 @@
+[tools]
+clang-format = "16.0.6"
+node = "26.13.1"
+ruby = "3.3.12"
+yarn = "4.19.0"
