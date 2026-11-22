@@ -1,6 +1,10 @@
 import { useRef, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-import PencilKitView, { type PencilKitRef, type PencilKitTool } from 'react-native-pencil-kit';
+import PencilKitView, {
+  PencilKitUtil,
+  type PencilKitRef,
+  type PencilKitTool,
+} from 'react-native-pencil-kit';
 import { DocumentDirectoryPath } from '@dr.pogodin/react-native-fs';
 
 const allPens = [
@@ -19,6 +23,10 @@ const allErasers = [
   'eraserVector',
   'eraserFixedWidthBitmap',
 ] satisfies PencilKitTool[];
+
+const availableTools = new Set(PencilKitUtil.getAvailableTools());
+const availablePens = allPens.filter((tool) => availableTools.has(tool));
+const availableErasers = allErasers.filter((tool) => availableTools.has(tool));
 
 function getRandomColor() {
   const r = Math.floor(Math.random() * 256);
@@ -118,22 +126,24 @@ export default function App() {
           }}
           text={'load base64'}
         />
-        {allPens.map((p) => (
+        {availablePens.map((p) => (
           <Btn
             key={p}
             variant={1}
             onPress={() =>
               ref.current?.setTool({
                 toolType: p,
-                width: 3 + Math.random() * 5,
+                width: p === 'reed' ? undefined : 3 + Math.random() * 5,
                 color: getRandomColor(),
               })
             }
             text={p}
           />
         ))}
-        <Btn onPress={() => ref.current?.setTool({ toolType: 'lasso' })} text={'lasso'} />
-        {allErasers.map((p) => (
+        {availableTools.has('lasso') && (
+          <Btn onPress={() => ref.current?.setTool({ toolType: 'lasso' })} text={'lasso'} />
+        )}
+        {availableErasers.map((p) => (
           <Btn
             variant={2}
             key={p}

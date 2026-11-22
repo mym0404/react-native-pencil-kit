@@ -7,19 +7,16 @@
 
 #import "RNPencilKitUtil.h"
 #import "RNPencilKit.h"
-#import <React/RCTBridge.h>
-#import <React/RCTUIManager.h>
+#import <React/RCTUtils.h>
 
 @implementation RNPencilKitUtil
 
-@synthesize bridge = _bridge;
+@synthesize viewRegistry_DEPRECATED = _viewRegistry_DEPRECATED;
 
 RCT_EXPORT_MODULE()
 
 - (RNPencilKit*)getView:(double)viewId {
-  return static_cast<RNPencilKit*>(
-      [self.bridge.uiManager viewForReactTag:[NSNumber numberWithDouble:viewId]]);
-  ;
+  return static_cast<RNPencilKit*>([self.viewRegistry_DEPRECATED viewForReactTag:@(viewId)]);
 }
 - (void)doReject:(RCTPromiseRejectBlock)reject name:(NSString*)name {
   reject(@"RNPencilKit", [@"failed to " stringByAppendingString:name],
@@ -141,40 +138,25 @@ RCT_EXPORT_MODULE()
 }
 
 - (NSArray<NSString*>*)getAvailableTools {
-  if ([self isPencilKitAvailable]) {
-    if ([self isiOSEqualsOrGreaterThan17]) {
-      NSArray<NSString*>* tools = @[
-        @"pen",
-        @"pencil",
-        @"marker",
-        @"monoline",
-        @"fountainPen",
-        @"watercolor",
-        @"crayon",
-        @"eraserVector",
-        @"eraserBitmap",
-        @"eraserFixedWidthBitmap",
-        @"lasso",
-      ];
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
-      if (@available(iOS 26.0, *)) {
-        return [tools arrayByAddingObject:@"reed"];
-      }
-#endif
-      return tools;
-    } else {
-      return @[
-        @"pen",
-        @"pencil",
-        @"marker",
-        @"eraserVector",
-        @"eraserBitmap",
-        @"lasso",
-      ];
-    }
-  } else {
+  if (![self isPencilKitAvailable].boolValue) {
     return @[];
   }
+
+  NSMutableArray<NSString*>* tools = [@[ @"pen", @"pencil", @"marker" ] mutableCopy];
+  if (@available(iOS 17.0, *)) {
+    [tools addObjectsFromArray:@[ @"monoline", @"fountainPen", @"watercolor", @"crayon" ]];
+  }
+  [tools addObjectsFromArray:@[ @"eraserVector", @"eraserBitmap" ]];
+  if (@available(iOS 16.4, *)) {
+    [tools addObject:@"eraserFixedWidthBitmap"];
+  }
+  [tools addObject:@"lasso"];
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
+  if (@available(iOS 26.0, *)) {
+    [tools addObject:@"reed"];
+  }
+#endif
+  return tools;
 }
 
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:

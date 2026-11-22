@@ -5,8 +5,6 @@
 #import <react/renderer/components/RNPencilKitSpec/Props.h>
 #import <react/renderer/components/RNPencilKitSpec/RCTComponentViewHelpers.h>
 
-#import "RCTFabricComponentsPlugins.h"
-
 using namespace facebook::react;
 
 static inline const std::shared_ptr<const RNPencilKitEventEmitter>
@@ -68,8 +66,8 @@ getEmitter(const SharedViewEventEmitter emitter) {
   if (prev.isOpaque ^ next.isOpaque)
     [_view setOpaque:next.isOpaque];
 
-  if (prev.backgroundColor ^ next.backgroundColor) {
-    [_view setBackgroundColor:intToColor(next.backgroundColor)];
+  if (prev.canvasBackgroundColor ^ next.canvasBackgroundColor) {
+    [_view setBackgroundColor:intToColor(next.canvasBackgroundColor)];
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -244,10 +242,11 @@ getEmitter(const SharedViewEventEmitter emitter) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 260000
   if (@available(iOS 26.0, *)) {
     if (tool == "reed") {
-      _toolPicker.selectedTool = _view.tool =
-          [[PKInkingTool alloc] initWithInkType:PKInkTypeReed
-                                          color:isColorValid ? intToColor(color) : defaultColor
-                                          width:isWidthValid ? width : defaultWidth];
+      _toolPicker.selectedTool = _view.tool = [[PKInkingTool alloc]
+          initWithInkType:PKInkTypeReed
+                    color:isColorValid ? intToColor(color) : defaultColor
+                    width:isWidthValid ? width
+                                       : [PKInkingTool defaultWidthForInkType:PKInkTypeReed]];
     }
   }
 #endif
