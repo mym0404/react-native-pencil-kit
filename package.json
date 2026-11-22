@@ -1,6 +1,6 @@
 {
   "name": "react-native-pencil-kit",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "iOS PencilKit for React Native",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

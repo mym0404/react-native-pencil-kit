@@ -1764,7 +1764,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - RNPencilKit (1.2.3):
+  - RNPencilKit (1.2.4):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2148,7 +2148,7 @@ SPEC CHECKSUMS:
   ReactCommon: b63ce798b898ed77c6cfdeb80b18080161f52ed5
   ReactNativeDependencies: a5164c3ebbe90d992022b5d9cbabbf770a6d7d05
   ReactNativeFs: c0b2d8faaa402ae3224aa2c098aec9212fdc392e
-  RNPencilKit: 95069a061298a3a051a0e9a9e613d430cbca8320
+  RNPencilKit: 45d21eb2184a23f4569d7f4460d503f5e274aaac
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
 
